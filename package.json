@@ -1,24 +1,30 @@
 {
-  "name": "@moontai0724/package-template",
+  "name": "@moontai0724/openapi",
   "private": false,
   "publishConfig": {
     "access": "public"
   },
   "version": "0.0.0-pre",
-  "description": "An npm package template.",
+  "description": "An OpenAPI document define, generate and schema validation library supported by ajv.",
   "author": "moontai0724",
-  "license": "UNLICENSED",
-  "homepage": "https://moontai0724.github.io/package-template",
+  "license": "MIT",
+  "homepage": "https://moontai0724.github.io/openapi",
   "bugs": {
-    "url": "https://github.com/moontai0724/package-template/issues"
+    "url": "https://github.com/moontai0724/openapi/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/moontai0724/package-template.git"
+    "url": "git+https://github.com/moontai0724/openapi.git"
   },
   "keywords": [
-    "package",
-    "template"
+    "openapi",
+    "typebox",
+    "schema",
+    "validate",
+    "generate",
+    "document",
+    "typescript",
+    "automation"
   ],
   "files": [
     "build",
