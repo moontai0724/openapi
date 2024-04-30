@@ -1,11 +1,29 @@
 import path from "node:path";
 
 import babel from "@rollup/plugin-babel";
+import commonjs from "@rollup/plugin-commonjs";
+import nodeResolve from "@rollup/plugin-node-resolve";
 import minifier from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 import { dts } from "rollup-plugin-dts";
 
 const dist = "dist";
+
+const commonPlugins = [
+  typescript(),
+  commonjs(),
+  nodeResolve(),
+  babel({
+    babelHelpers: "bundled",
+  }),
+];
+
+const minifiedPlugins = [
+  ...commonPlugins,
+  minifier({
+    compress: true,
+  }),
+];
 
 export default [
   // cjs
@@ -16,12 +34,7 @@ export default [
       format: "cjs",
       sourcemap: true,
     },
-    plugins: [
-      typescript(),
-      babel({
-        babelHelpers: "bundled",
-      }),
-    ],
+    plugins: commonPlugins,
   },
   // esm
   {
@@ -31,14 +44,7 @@ export default [
       format: "es",
       sourcemap: true,
     },
-    plugins: [
-      typescript({
-        sourceMap: true,
-      }),
-      babel({
-        babelHelpers: "bundled",
-      }),
-    ],
+    plugins: commonPlugins,
   },
   // min.cjs
   {
@@ -48,15 +54,7 @@ export default [
       format: "cjs",
       sourcemap: true,
     },
-    plugins: [
-      typescript(),
-      babel({
-        babelHelpers: "bundled",
-      }),
-      minifier({
-        compress: true,
-      }),
-    ],
+    plugins: minifiedPlugins,
   },
   // min.esm
   {
@@ -66,17 +64,7 @@ export default [
       format: "es",
       sourcemap: true,
     },
-    plugins: [
-      typescript({
-        sourceMap: true,
-      }),
-      babel({
-        babelHelpers: "bundled",
-      }),
-      minifier({
-        compress: true,
-      }),
-    ],
+    plugins: minifiedPlugins,
   },
   // dts
   {
@@ -86,6 +74,11 @@ export default [
       format: "es",
       sourcemap: false,
     },
-    plugins: [typescript(), dts()],
+    plugins: [
+      typescript(),
+      dts({
+        respectExternal: true,
+      }),
+    ],
   },
 ];

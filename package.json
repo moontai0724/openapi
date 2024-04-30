@@ -56,8 +56,10 @@
     "@babel/core": "^7.24.4",
     "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
-    "@moontai0724/openapi-types": "^3.1.4",
+    "@moontai0724/openapi-types": "^3.1.5",
     "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@semantic-release/changelog": "^6.0.3",
@@ -99,6 +101,6 @@
     "json-to-pretty-yaml": "^1.2.2"
   },
   "peerDependencies": {
-    "@moontai0724/openapi-types": "^3.1.4"
+    "@moontai0724/openapi-types": "^3.1.5"
   }
 }
