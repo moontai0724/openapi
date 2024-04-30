@@ -72,6 +72,10 @@ export function transformParameter(
   return deepMerge(parameter, remainOptions) as AnyParameterObject;
 }
 
+export interface ParameterSchema extends SchemaObject {
+  properties: Record<string, SchemaObject>;
+}
+
 /**
  * Transform a schema object to array of parameter objects.
  * @param location The location of the parameter. (e.g. path, query, header, cookie)
@@ -81,11 +85,9 @@ export function transformParameter(
  */
 export function transformParameters(
   location: ParameterLocation,
-  schema: SchemaObject,
+  schema: ParameterSchema,
   options: TransformParametersOptions,
 ) {
-  if (!schema.properties?.length) return [];
-
   return Object.entries(schema.properties).map(([name, itemSchema]) => {
     if (typeof itemSchema !== "object")
       throw new Error("Unhandled schema type! Please report this issue.");

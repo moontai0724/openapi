@@ -5,6 +5,7 @@ import type {
 } from "@moontai0724/openapi-types";
 
 import {
+  type ParameterSchema,
   transformParameters,
   type TransformParametersOptions,
 } from "./parameter";
@@ -22,19 +23,19 @@ export interface OperationSchemas {
   /**
    * Schema for the cookie parameters.
    */
-  cookie?: SchemaObject;
+  cookie?: ParameterSchema;
   /**
    * Schema for the header parameters.
    */
-  header?: SchemaObject;
+  header?: ParameterSchema;
   /**
    * Schema for the path parameters.
    */
-  path?: SchemaObject;
+  path?: ParameterSchema;
   /**
    * Schema for the query parameters.
    */
-  query?: SchemaObject;
+  query?: ParameterSchema;
   /**
    * Schema for the response.
    */
@@ -108,7 +109,7 @@ export interface TransformOptions {
 export function transformOperation(
   operationSchemas: OperationSchemas,
   options: TransformOptions = {},
-): OperationObject {
+) {
   const { body, cookie, header, path, query, response } = operationSchemas;
   const {
     operation: operationOptions = {},
@@ -140,10 +141,10 @@ export function transformOperation(
 
   const operation = {
     ...operationOptions,
+    parameters,
     requestBody,
     responses,
-    parameters,
-  };
+  } satisfies OperationObject;
 
-  return operation;
+  return operation as OperationObject;
 }
