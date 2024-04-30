@@ -9,7 +9,8 @@ import { deepMerge } from "../utils/deep-merge";
 /**
  * Options or overwrites to the result RequestBodyObject when transforming.
  */
-export interface TransformRequestBodyOptions {
+export interface TransformRequestBodyOptions
+  extends Partial<Omit<RequestBodyObject, "content">> {
   /**
    * Overwrite properties of request body content.
    */
@@ -59,5 +60,5 @@ export function transformRequestBody(
     ),
   } satisfies RequestBodyObject;
 
-  return deepMerge(requestBody, remainOptions);
+  return deepMerge(requestBody, remainOptions) as RequestBodyObject;
 }
