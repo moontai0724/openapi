@@ -90,4 +90,24 @@ module.exports = {
       },
     },
   },
+  overrides: [
+    {
+      files: ["./*.ts"],
+      rules: {
+        "import/no-extraneous-dependencies": "off",
+      },
+      parserOptions: {
+        project: "e2e/tsconfig.json",
+      },
+    },
+    {
+      files: ["e2e/**/*.ts", "*.test.ts", "*.spec.ts"],
+      rules: {
+        "import/no-extraneous-dependencies": "off",
+      },
+      parserOptions: {
+        project: "e2e/tsconfig.json",
+      },
+    },
+  ],
 };

@@ -6,6 +6,5 @@
     "rootDir": ".",
     "baseUrl": ".",
     "outDir": "../build"
-  },
-  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+  }
 }
