@@ -50,23 +50,19 @@ export function transformParameter(
   required: boolean,
   options: TransformParametersOptions,
 ) {
-  const { description } = schema;
-  const {
-    allowReserved = [],
-    deprecated = [],
-    explode = [],
-    ...remainOptions
-  } = options;
+  const { description, examples } = schema;
+  const { allowReserved, deprecated, explode, ...remainOptions } = options;
 
   const parameter = {
     name,
     in: location,
     description,
     required,
-    deprecated: deprecated.includes(name),
-    explode: explode.includes(name),
-    allowReserved: allowReserved.includes(name),
+    deprecated: deprecated?.includes(name),
+    explode: explode?.includes(name),
+    allowReserved: allowReserved?.includes(name),
     schema,
+    examples: examples as ParameterObject["examples"],
   } satisfies ParameterObject;
 
   return deepMerge(parameter, remainOptions) as AnyParameterObject;
@@ -92,6 +88,12 @@ export function transformParameters(
     if (typeof itemSchema !== "object")
       throw new Error("Unhandled schema type! Please report this issue.");
 
-    return transformParameter(name, location, itemSchema, true, options);
+    return transformParameter(
+      name,
+      location,
+      itemSchema,
+      !!schema.required?.includes(name),
+      options,
+    );
   });
 }
