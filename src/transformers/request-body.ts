@@ -14,7 +14,7 @@ export interface TransformRequestBodyOptions
   /**
    * Overwrite properties of request body content.
    */
-  content?: Partial<Omit<MediaTypeObject, "schema" | "example" | "examples">>;
+  content?: Partial<Omit<MediaTypeObject, "schema">>;
   /**
    * Array of content types to be set with this schema.
    * @default ["application/json"]
@@ -26,9 +26,13 @@ function transformRequestBodyContent(
   schema: SchemaObject,
   options: TransformRequestBodyOptions["content"],
 ) {
+  const { example, examples } = schema;
+
   return {
-    ...options,
     schema,
+    example,
+    examples: examples as MediaTypeObject["examples"],
+    ...options,
   } satisfies MediaTypeObject;
 }
 
@@ -48,13 +52,14 @@ export function transformRequestBody(
     contentTypes = ["application/json"],
     ...remainOptions
   } = options;
+  const contentBody = transformRequestBodyContent(schema, contentOptions);
   const requestBody = {
     description,
-    required: true,
+    required: !!schema,
     content: contentTypes.reduce(
       (acc, contentType) => ({
         ...acc,
-        [contentType]: transformRequestBodyContent(schema, contentOptions),
+        [contentType]: contentBody,
       }),
       {},
     ),
