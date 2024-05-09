@@ -17,7 +17,7 @@
     {
       "name": "test",
       "request": "launch",
-      "runtimeArgs": ["run", "test", "--no-coverage", "${file}"],
+      "runtimeArgs": ["run", "test", "--", "--no-coverage", "${file}"],
       "runtimeExecutable": "npm",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
