@@ -43,9 +43,11 @@ function transformRequestBodyContent(
  * @returns Transformed request body object.
  */
 export function transformRequestBody(
-  schema: SchemaObject,
-  options: TransformRequestBodyOptions,
+  schema?: SchemaObject,
+  options: TransformRequestBodyOptions = {},
 ) {
+  if (!schema) return undefined;
+
   const { description } = schema;
   const {
     content: contentOptions,
