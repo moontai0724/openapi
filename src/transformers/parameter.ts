@@ -48,7 +48,7 @@ export function transformParameter(
   location: ParameterLocation,
   schema: SchemaObject,
   required: boolean,
-  options: TransformParametersOptions,
+  options: TransformParametersOptions = {},
 ) {
   const { description, examples } = schema;
   const { allowReserved, deprecated, explode, ...remainOptions } = options;
@@ -82,7 +82,7 @@ export interface ParameterSchema extends SchemaObject {
 export function transformParameters(
   location: ParameterLocation,
   schema: ParameterSchema,
-  options: TransformParametersOptions,
+  options: TransformParametersOptions = {},
 ) {
   return Object.entries(schema.properties).map(([name, itemSchema]) => {
     if (typeof itemSchema !== "object")
