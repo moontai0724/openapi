@@ -1,5 +1,7 @@
 import type { MediaTypeObject, SchemaObject } from "@moontai0724/openapi-types";
 
+import { deepMerge } from "../../utils/deep-merge";
+
 export interface TransformMediaObjectOptions
   extends Partial<Omit<MediaTypeObject, "schema">> {}
 
@@ -9,10 +11,11 @@ export function transformMediaObject(
 ) {
   const { example, examples, ...remains } = schema;
 
-  return {
+  const content = {
     schema: remains,
     example,
     examples: examples as MediaTypeObject["examples"],
-    ...options,
   } satisfies MediaTypeObject;
+
+  return deepMerge(content, options) as MediaTypeObject;
 }
