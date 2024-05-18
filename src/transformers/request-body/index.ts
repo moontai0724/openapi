@@ -4,7 +4,7 @@ import type {
   SchemaObject,
 } from "@moontai0724/openapi-types";
 
-import { deepMerge } from "../utils/deep-merge";
+import { deepMerge } from "../../utils/deep-merge";
 
 /**
  * Options or overwrites to the result RequestBodyObject when transforming.
@@ -46,7 +46,10 @@ export function transformRequestBody(
   schema?: SchemaObject,
   options: TransformRequestBodyOptions = {},
 ) {
-  if (!schema) return undefined;
+  if (!schema)
+    return {
+      content: {},
+    };
 
   const { description } = schema;
   const {
