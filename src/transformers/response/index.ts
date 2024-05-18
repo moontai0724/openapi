@@ -1,36 +1,26 @@
 import type {
-  MediaTypeObject,
   ResponseObject,
   ResponsesObject,
   SchemaObject,
 } from "@moontai0724/openapi-types";
 
 import { deepMerge } from "../../utils/deep-merge";
+import {
+  transformMediaObject,
+  type TransformMediaObjectOptions,
+} from "../media-object";
 
 /**
  * Options or overwrites to the result ResponseObject when transforming.
  */
-export interface TransformResponseOptions
-  extends Partial<Omit<ResponseObject, "content">> {
-  /**
-   * Overwrite properties of response content.
-   */
-  content?: Partial<Omit<MediaTypeObject, "schema" | "example" | "examples">>;
+export interface TransformResponseOptions {
+  contentOverwrite?: TransformMediaObjectOptions;
   /**
    * Array of content types to be set with this schema.
    * @default ["application/json"]
    */
   contentTypes?: string[];
-}
-
-function transformResponseContent(
-  schema: SchemaObject,
-  options: TransformResponseOptions["content"],
-) {
-  return {
-    ...options,
-    schema,
-  } satisfies MediaTypeObject;
+  overwrite?: Omit<ResponseObject, "content">;
 }
 
 /**
@@ -41,48 +31,53 @@ function transformResponseContent(
  */
 export function transformResponse(
   schema?: SchemaObject,
-  options: TransformResponseOptions = { description: "" },
-) {
-  if (!schema) return options;
-
-  const { description = "" } = schema;
+  options: TransformResponseOptions = {},
+): ResponseObject {
   const {
-    content: contentOptions,
+    overwrite = {} as Omit<ResponseObject, "content">,
+    contentOverwrite,
     contentTypes = ["application/json"],
-    ...remainOptions
   } = options;
+  const { description: overwriteDescription, ...remainOverwrites } = overwrite;
+
+  if (!schema)
+    return {
+      description: overwriteDescription ?? "No Description.",
+      ...remainOverwrites,
+    };
+  const { description, ...remainSchema } = schema;
   const response = {
-    description,
+    description: overwriteDescription ?? description ?? "No Description.",
     content: contentTypes.reduce(
       (acc, contentType) => ({
         ...acc,
-        [contentType]: transformResponseContent(schema, contentOptions),
+        [contentType]: transformMediaObject(remainSchema, contentOverwrite),
       }),
       {},
     ),
   } satisfies ResponseObject;
 
-  return deepMerge(response, remainOptions) as typeof response;
+  return deepMerge(response, remainOverwrites) as typeof response;
 }
 
-export interface TransformResponsesOptions
-  extends ResponsesObject,
-    TransformResponseOptions {
+export interface TransformResponsesOptions {
   /**
    * HTTP code of the response.
    * @default 200
    */
   httpCode?: number;
+  overwrite?: ResponsesObject;
+  responseOptions?: TransformResponseOptions;
 }
 
 export function transformResponses(
   schema?: SchemaObject,
   options: TransformResponsesOptions = {},
 ) {
-  const { httpCode = 200, ...remainOptions } = options;
+  const { httpCode = 200, overwrite = {}, responseOptions } = options;
 
   return {
-    ...remainOptions,
-    [httpCode]: transformResponse(schema, remainOptions),
+    ...overwrite,
+    [httpCode.toString()]: transformResponse(schema, responseOptions),
   } satisfies ResponsesObject;
 }
