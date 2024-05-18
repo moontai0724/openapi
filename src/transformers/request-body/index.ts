@@ -26,10 +26,10 @@ function transformRequestBodyContent(
   schema: SchemaObject,
   options: TransformRequestBodyOptions["content"],
 ) {
-  const { example, examples } = schema;
+  const { example, examples, ...remains } = schema;
 
   return {
-    schema,
+    schema: remains,
     example,
     examples: examples as MediaTypeObject["examples"],
     ...options,
