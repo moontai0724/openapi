@@ -13,21 +13,27 @@ enum Gender {
   NonBinary = "non-binary",
 }
 
-const schema: SchemaObject = Type.Object({
-  name: Type.String(),
-  account: Type.String({ pattern: "^[a-zA-Z0-9]{8,16}$" }),
-  age: Type.Optional(Type.Integer({ format: "int32", minimum: 0 })),
-  email: Type.String({ format: "email" }),
-  valid: Type.Optional(Type.Boolean({ default: true })),
-  gender: Type.Optional(Type.Enum(Gender)),
-  permissions: Type.Optional(
-    Type.Array(Type.Union([Type.Literal("read"), Type.Literal("write")]), {
-      default: [],
-    }),
-  ),
-});
+const schema: SchemaObject = Type.Object(
+  {
+    name: Type.String(),
+    account: Type.String({ pattern: "^[a-zA-Z0-9]{8,16}$" }),
+    age: Type.Optional(Type.Integer({ format: "int32", minimum: 0 })),
+    email: Type.String({ format: "email" }),
+    valid: Type.Optional(Type.Boolean({ default: true })),
+    gender: Type.Optional(Type.Enum(Gender)),
+    permissions: Type.Optional(
+      Type.Array(Type.Union([Type.Literal("read"), Type.Literal("write")]), {
+        default: [],
+      }),
+    ),
+  },
+  {
+    description: "Some description",
+  },
+);
 
 const expected: RequestBodyObject = {
+  description: "Some description",
   required: true,
   content: {
     "application/json": {

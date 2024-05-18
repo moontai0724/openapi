@@ -29,6 +29,7 @@ const schema: SchemaObject = Type.Object(
     ),
   },
   {
+    description: "Original description",
     example: {
       name: "sample",
       account: "sample",

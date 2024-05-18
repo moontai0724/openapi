@@ -51,13 +51,13 @@ export function transformRequestBody(
       content: {},
     };
 
-  const { description } = schema;
+  const { description, ...remains } = schema;
   const {
     content: contentOptions,
     contentTypes = ["application/json"],
     ...remainOptions
   } = options;
-  const contentBody = transformRequestBodyContent(schema, contentOptions);
+  const contentBody = transformRequestBodyContent(remains, contentOptions);
   const requestBody = {
     description,
     required: options.required ?? !!schema,
