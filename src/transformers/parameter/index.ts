@@ -5,7 +5,7 @@ import type {
   SchemaObject,
 } from "@moontai0724/openapi-types";
 
-import { deepMerge } from "../utils/deep-merge";
+import { deepMerge } from "../../utils/deep-merge";
 
 /**
  * Options or overwrites to the result ParameterObject when transforming.
