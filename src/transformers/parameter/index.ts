@@ -7,31 +7,24 @@ import type {
 
 import { deepMerge } from "../../utils/deep-merge";
 
+export interface TransformParameterOptions
+  extends Partial<Omit<ParameterObject, "name" | "in" | "schema">> {}
+
 /**
  * Options or overwrites to the result ParameterObject when transforming.
  */
-export interface TransformParametersOptions
-  extends Partial<
-    Omit<ParameterObject, "schema" | "deprecated" | "explode" | "allowReserved">
-  > {
+export interface TransformParametersOptions {
   /**
-   * The transformer will set the `allowReserved` property to `true` if the
-   * parameter name is included in this array.
-   * @see ParameterObject.allowReserved
+   * Options to overwrite to all parameters.
    */
-  allowReserved?: string[];
+  overwriteAll?: TransformParameterOptions;
   /**
-   * The transformer will set the `deprecated` property to `true` if the
-   * parameter name is included in this array.
-   * @see ParameterObject.deprecated
+   * Overwrite to the corresponding parameter when transforming. Key is the name
+   * of the parameter.
    */
-  deprecated?: string[];
-  /**
-   * The transformer will set the `explode` property to `true` if the parameter
-   * name is included in this array.
-   * @see ParameterObject.explode
-   */
-  explode?: string[];
+  overwrites?: {
+    [key: string]: TransformParameterOptions;
+  };
 }
 
 /**
@@ -48,24 +41,22 @@ export function transformParameter(
   location: ParameterLocation,
   schema: SchemaObject,
   required: boolean,
-  options: TransformParametersOptions = {},
+  options: TransformParameterOptions = {},
 ) {
-  const { description, examples } = schema;
-  const { allowReserved, deprecated, explode, ...remainOptions } = options;
+  const { example, examples, ...remains } = schema;
+  const { description } = remains;
 
   const parameter = {
     name,
     in: location,
     description,
     required,
-    deprecated: deprecated?.includes(name),
-    explode: explode?.includes(name),
-    allowReserved: allowReserved?.includes(name),
-    schema,
+    schema: remains,
+    example,
     examples: examples as ParameterObject["examples"],
   } satisfies ParameterObject;
 
-  return deepMerge(parameter, remainOptions) as AnyParameterObject;
+  return deepMerge(parameter, options) as AnyParameterObject;
 }
 
 export interface ParameterSchema extends SchemaObject {
@@ -93,7 +84,7 @@ export function transformParameters(
       location,
       itemSchema,
       !!schema.required?.includes(name),
-      options,
+      deepMerge(options?.overwriteAll ?? {}, options?.overwrites?.[name] ?? {}),
     );
   });
 }
