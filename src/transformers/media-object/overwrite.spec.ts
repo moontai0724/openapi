@@ -1,12 +1,8 @@
-import type {
-  MediaTypeObject,
-  RequestBodyObject,
-  SchemaObject,
-} from "@moontai0724/openapi-types";
+import type { MediaTypeObject, SchemaObject } from "@moontai0724/openapi-types";
 import { Type } from "@sinclair/typebox";
 import { expect, it } from "vitest";
 
-import { transformRequestBody, type TransformRequestBodyOptions } from ".";
+import { transformMediaObject, type TransformMediaObjectOptions } from ".";
 
 enum Gender {
   Female = "female",
@@ -29,7 +25,7 @@ const schema: SchemaObject = Type.Object(
     ),
   },
   {
-    description: "Original description",
+    description: "Some description",
     example: {
       name: "sample",
       account: "sample",
@@ -61,39 +57,35 @@ const schema: SchemaObject = Type.Object(
   },
 );
 
-const options: TransformRequestBodyOptions = {
-  content: {
-    example: {
-      name: "example",
-      account: "example",
-      email: "example@example.com",
-    },
-    examples: {
-      example1: {
-        summary: "Example 1",
-        value: {
-          name: "example 1",
-          account: "example1",
-          email: "example1@example.com",
-        },
+const options: TransformMediaObjectOptions = {
+  example: {
+    name: "example",
+    account: "example",
+    email: "example@example.com",
+  },
+  examples: {
+    example1: {
+      summary: "Example 1",
+      value: {
+        name: "example 1",
+        account: "example1",
+        email: "example1@example.com",
       },
-      example2: {
-        summary: "Example 2",
-        value: {
-          name: "example 2",
-          account: "example2",
-          email: "example2@example.com",
-        },
+    },
+    example2: {
+      summary: "Example 2",
+      value: {
+        name: "example 2",
+        account: "example2",
+        email: "example2@example.com",
       },
     },
   },
-  contentTypes: ["application/x-www-form-urlencoded", "application/xml"],
-  description: "Some description",
-  required: false,
 };
 
-const content: MediaTypeObject = {
+const expected: MediaTypeObject = {
   schema: {
+    description: "Some description",
     type: "object",
     required: ["name", "account", "email"],
     properties: {
@@ -176,15 +168,6 @@ const content: MediaTypeObject = {
   },
 };
 
-const expected: RequestBodyObject = {
-  description: "Some description",
-  required: false,
-  content: {
-    "application/x-www-form-urlencoded": content,
-    "application/xml": content,
-  },
-};
-
-it("should be able to transform a schema and overwrite properties with options", () => {
-  expect(transformRequestBody(schema, options)).toEqual(expected);
+it("should be able to transform a schema", () => {
+  expect(transformMediaObject(schema, options)).toEqual(expected);
 });

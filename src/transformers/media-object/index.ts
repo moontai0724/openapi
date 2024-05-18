@@ -10,12 +10,17 @@ export function transformMediaObject(
   options: TransformMediaObjectOptions = {},
 ) {
   const { example, examples, ...remains } = schema;
+  const {
+    example: exampleOverwrite,
+    examples: examplesOptions,
+    ...remainOptions
+  } = options;
 
   const content = {
     schema: remains,
-    example,
-    examples: examples as MediaTypeObject["examples"],
+    example: exampleOverwrite ?? example,
+    examples: examplesOptions ?? (examples as MediaTypeObject["examples"]),
   } satisfies MediaTypeObject;
 
-  return deepMerge(content, options) as MediaTypeObject;
+  return deepMerge(content, remainOptions) as MediaTypeObject;
 }
