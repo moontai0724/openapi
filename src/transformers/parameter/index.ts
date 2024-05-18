@@ -45,6 +45,11 @@ export function transformParameter(
 ) {
   const { example, examples, ...remains } = schema;
   const { description } = remains;
+  const {
+    example: overwriteExample,
+    examples: overwriteExamples,
+    ...remainOptions
+  } = options;
 
   const parameter = {
     name,
@@ -52,11 +57,15 @@ export function transformParameter(
     description,
     required,
     schema: remains,
-    example,
-    examples: examples as ParameterObject["examples"],
+    example: Object.keys(options).includes("example")
+      ? overwriteExample
+      : example,
+    examples: Object.keys(options).includes("examples")
+      ? overwriteExamples
+      : (examples as ParameterObject["examples"]),
   } satisfies ParameterObject;
 
-  return deepMerge(parameter, options) as AnyParameterObject;
+  return deepMerge(parameter, remainOptions) as AnyParameterObject;
 }
 
 export interface ParameterSchema extends SchemaObject {
@@ -79,12 +88,18 @@ export function transformParameters(
     if (typeof itemSchema !== "object")
       throw new Error("Unhandled schema type! Please report this issue.");
 
+    const { overwriteAll = {}, overwrites = {} } = options;
+    const overwrite = {
+      ...overwriteAll,
+      ...(overwrites?.[name] ?? {}),
+    };
+
     return transformParameter(
       name,
       location,
       itemSchema,
       !!schema.required?.includes(name),
-      deepMerge(options?.overwriteAll ?? {}, options?.overwrites?.[name] ?? {}),
+      overwrite,
     );
   });
 }
