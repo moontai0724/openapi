@@ -60,7 +60,7 @@ export function transformRequestBody(
   const contentBody = transformRequestBodyContent(schema, contentOptions);
   const requestBody = {
     description,
-    required: !!schema,
+    required: options.required ?? !!schema,
     content: contentTypes.reduce(
       (acc, contentType) => ({
         ...acc,
