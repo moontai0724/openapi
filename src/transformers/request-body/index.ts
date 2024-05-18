@@ -12,17 +12,17 @@ import {
 /**
  * Options or overwrites to the result RequestBodyObject when transforming.
  */
-export interface TransformRequestBodyOptions
-  extends Partial<Omit<RequestBodyObject, "content">> {
+export interface TransformRequestBodyOptions {
   /**
    * Overwrite properties of request body content.
    */
-  content?: TransformMediaObjectOptions;
+  contentOverwrite?: TransformMediaObjectOptions;
   /**
    * Array of content types to be set with this schema.
    * @default ["application/json"]
    */
   contentTypes?: string[];
+  overwrite?: Partial<Omit<RequestBodyObject, "content">>;
 }
 
 /**
@@ -42,14 +42,14 @@ export function transformRequestBody(
 
   const { description, ...remains } = schema;
   const {
-    content: contentOptions,
+    overwrite = {},
+    contentOverwrite: contentOptions,
     contentTypes = ["application/json"],
-    ...remainOptions
   } = options;
   const contentBody = transformMediaObject(remains, contentOptions);
   const requestBody = {
     description,
-    required: options.required ?? !!schema,
+    required: !!schema,
     content: contentTypes.reduce(
       (acc, contentType) => ({
         ...acc,
@@ -59,5 +59,5 @@ export function transformRequestBody(
     ),
   } satisfies RequestBodyObject;
 
-  return deepMerge(requestBody, remainOptions) as RequestBodyObject;
+  return deepMerge(requestBody, overwrite) as RequestBodyObject;
 }

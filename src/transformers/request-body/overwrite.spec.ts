@@ -14,19 +14,52 @@ enum Gender {
   NonBinary = "non-binary",
 }
 
-const schema: SchemaObject = Type.Object({
-  name: Type.String(),
-  account: Type.String({ pattern: "^[a-zA-Z0-9]{8,16}$" }),
-  age: Type.Optional(Type.Integer({ format: "int32", minimum: 0 })),
-  email: Type.String({ format: "email" }),
-  valid: Type.Optional(Type.Boolean({ default: true })),
-  gender: Type.Optional(Type.Enum(Gender)),
-  permissions: Type.Optional(
-    Type.Array(Type.Union([Type.Literal("read"), Type.Literal("write")]), {
-      default: [],
-    }),
-  ),
-});
+const schema: SchemaObject = Type.Object(
+  {
+    name: Type.String(),
+    account: Type.String({ pattern: "^[a-zA-Z0-9]{8,16}$" }),
+    age: Type.Optional(Type.Integer({ format: "int32", minimum: 0 })),
+    email: Type.String({ format: "email" }),
+    valid: Type.Optional(Type.Boolean({ default: true })),
+    gender: Type.Optional(Type.Enum(Gender)),
+    permissions: Type.Optional(
+      Type.Array(Type.Union([Type.Literal("read"), Type.Literal("write")]), {
+        default: [],
+      }),
+    ),
+  },
+  {
+    description: "Original description",
+    example: {
+      name: "sample",
+      account: "sample",
+      email: "sample@example.com",
+    },
+    examples: {
+      sample1: {
+        summary: "Sample 1",
+        description: "Sample 1 Description",
+        value: {
+          name: "sample1",
+          age: 10,
+        },
+      },
+      sample2: {
+        summary: "Sample 2",
+        value: {
+          name: "sample2",
+          age: 20,
+        },
+      },
+      sample3: {
+        description: "Sample 3 Description",
+        value: {
+          name: "sample3",
+        },
+      },
+    },
+  },
+);
 
 const options: TransformRequestBodyOptions = {
   contentTypes: ["application/x-www-form-urlencoded", "application/xml"],
@@ -42,6 +75,7 @@ const options: TransformRequestBodyOptions = {
     },
     examples: {
       example1: {
+        summary: "Example 1",
         value: {
           name: "example 1",
           account: "example1",
@@ -49,6 +83,7 @@ const options: TransformRequestBodyOptions = {
         },
       },
       example2: {
+        summary: "Example 2",
         value: {
           name: "example 2",
           account: "example2",
@@ -125,6 +160,7 @@ const content: MediaTypeObject = {
   },
   examples: {
     example1: {
+      summary: "Example 1",
       value: {
         name: "example 1",
         account: "example1",
@@ -132,6 +168,7 @@ const content: MediaTypeObject = {
       },
     },
     example2: {
+      summary: "Example 2",
       value: {
         name: "example 2",
         account: "example2",
@@ -150,6 +187,6 @@ const expected: RequestBodyObject = {
   },
 };
 
-it("should be able to transform a schema with options", () => {
+it("should be able to transform a schema", () => {
   expect(transformRequestBody(schema, options)).toEqual(expected);
 });
