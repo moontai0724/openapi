@@ -1,10 +1,13 @@
 import type {
-  MediaTypeObject,
   RequestBodyObject,
   SchemaObject,
 } from "@moontai0724/openapi-types";
 
 import { deepMerge } from "../../utils/deep-merge";
+import {
+  transformMediaObject,
+  type TransformMediaObjectOptions,
+} from "../media-object";
 
 /**
  * Options or overwrites to the result RequestBodyObject when transforming.
@@ -14,26 +17,12 @@ export interface TransformRequestBodyOptions
   /**
    * Overwrite properties of request body content.
    */
-  content?: Partial<Omit<MediaTypeObject, "schema">>;
+  content?: TransformMediaObjectOptions;
   /**
    * Array of content types to be set with this schema.
    * @default ["application/json"]
    */
   contentTypes?: string[];
-}
-
-function transformRequestBodyContent(
-  schema: SchemaObject,
-  options: TransformRequestBodyOptions["content"],
-) {
-  const { example, examples, ...remains } = schema;
-
-  return {
-    schema: remains,
-    example,
-    examples: examples as MediaTypeObject["examples"],
-    ...options,
-  } satisfies MediaTypeObject;
 }
 
 /**
@@ -57,7 +46,7 @@ export function transformRequestBody(
     contentTypes = ["application/json"],
     ...remainOptions
   } = options;
-  const contentBody = transformRequestBodyContent(remains, contentOptions);
+  const contentBody = transformMediaObject(remains, contentOptions);
   const requestBody = {
     description,
     required: options.required ?? !!schema,
