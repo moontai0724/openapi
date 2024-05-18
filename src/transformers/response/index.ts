@@ -1,10 +1,11 @@
 import type {
   MediaTypeObject,
   ResponseObject,
+  ResponsesObject,
   SchemaObject,
 } from "@moontai0724/openapi-types";
 
-import { deepMerge } from "../utils/deep-merge";
+import { deepMerge } from "../../utils/deep-merge";
 
 /**
  * Options or overwrites to the result ResponseObject when transforming.
@@ -39,9 +40,11 @@ function transformResponseContent(
  * @returns Transformed response object.
  */
 export function transformResponse(
-  schema: SchemaObject,
-  options: TransformResponseOptions,
-): ResponseObject {
+  schema?: SchemaObject,
+  options: TransformResponseOptions = { description: "" },
+) {
+  if (!schema) return options;
+
   const { description = "" } = schema;
   const {
     content: contentOptions,
@@ -60,4 +63,26 @@ export function transformResponse(
   } satisfies ResponseObject;
 
   return deepMerge(response, remainOptions) as typeof response;
+}
+
+export interface TransformResponsesOptions
+  extends ResponsesObject,
+    TransformResponseOptions {
+  /**
+   * HTTP code of the response.
+   * @default 200
+   */
+  httpCode?: number;
+}
+
+export function transformResponses(
+  schema?: SchemaObject,
+  options: TransformResponsesOptions = {},
+) {
+  const { httpCode = 200, ...remainOptions } = options;
+
+  return {
+    ...remainOptions,
+    [httpCode]: transformResponse(schema, remainOptions),
+  } satisfies ResponsesObject;
 }
