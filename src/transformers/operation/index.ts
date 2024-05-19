@@ -67,7 +67,7 @@ export interface TransformOperationOptions {
   /**
    * Options or overwrites to the result OperationObject when transforming.
    */
-  overwrite?: TransformOperationOverwrites;
+  operation?: TransformOperationOverwrites;
   /**
    * Options or overwrites to the result ParameterObject of corresponding
    * `path` prooperties in schemas when transforming.
@@ -102,7 +102,7 @@ export function transformOperation(
 ) {
   const { body, cookie, header, path, query, response } = operationSchemas;
   const {
-    overwrite: operationOptions = {},
+    operation: operationOptions = {},
     requestBody: requestBodyOptions = {},
     responses: responsesOptions = {},
     cookie: cookieOptions = {},

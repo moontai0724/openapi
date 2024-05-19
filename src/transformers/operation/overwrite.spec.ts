@@ -70,7 +70,7 @@ beforeAll(async () => {
 });
 
 it("should be able to pass correct schemas to transformers", () => {
-  expect(transformOperation(schemas, { overwrite: overwrites })).toEqual(
+  expect(transformOperation(schemas, { operation: overwrites })).toEqual(
     expected,
   );
 });
