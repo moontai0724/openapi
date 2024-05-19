@@ -1,19 +1,19 @@
-import type {
-  OperationObject,
-  ResponsesObject,
-  SchemaObject,
-} from "@moontai0724/openapi-types";
+import type { OperationObject, SchemaObject } from "@moontai0724/openapi-types";
 
+import { deepMerge } from "../../utils/deep-merge";
 import {
   type ParameterSchema,
   transformParameters,
   type TransformParametersOptions,
-} from "./parameter";
+} from "../parameter";
 import {
   transformRequestBody,
   type TransformRequestBodyOptions,
-} from "./request-body";
-import { transformResponse, type TransformResponseOptions } from "./response";
+} from "../request-body";
+import {
+  transformResponses,
+  type TransformResponsesOptions,
+} from "../response";
 
 export interface OperationSchemas {
   /**
@@ -45,7 +45,7 @@ export interface OperationSchemas {
 /**
  * Options or overwrites to the result OperationObject when transforming.
  */
-interface TransformOperationOptions
+export interface TransformOperationOverwrites
   extends Partial<
     Omit<OperationObject, "parameters" | "requestBody" | "responses">
   > {}
@@ -53,7 +53,7 @@ interface TransformOperationOptions
 /**
  * Options or overwrites to the result PathItemObject when transforming.
  */
-export interface TransformOptions {
+export interface TransformOperationOptions {
   /**
    * Options or overwrites to the result ParameterObject of corresponding
    * `cookie` prooperties in schemas when transforming.
@@ -67,7 +67,7 @@ export interface TransformOptions {
   /**
    * Options or overwrites to the result OperationObject when transforming.
    */
-  operation?: TransformOperationOptions;
+  overwrite?: TransformOperationOverwrites;
   /**
    * Options or overwrites to the result ParameterObject of corresponding
    * `path` prooperties in schemas when transforming.
@@ -87,17 +87,7 @@ export interface TransformOptions {
    * Options or overwrites to the result ResponseObject of corresponding
    * `response` prooperties in schemas when transforming.
    */
-  response?: TransformResponseOptions & {
-    /**
-     * HTTP code of the response.
-     * @default 200
-     */
-    httpCode?: number;
-  };
-  /**
-   * Additional properties to append into ResponsesObject.
-   */
-  responses?: ResponsesObject;
+  responses?: TransformResponsesOptions;
 }
 
 /**
@@ -108,13 +98,12 @@ export interface TransformOptions {
  */
 export function transformOperation(
   operationSchemas: OperationSchemas,
-  options: TransformOptions = {},
+  options: TransformOperationOptions = {},
 ) {
   const { body, cookie, header, path, query, response } = operationSchemas;
   const {
-    operation: operationOptions = {},
+    overwrite: operationOptions = {},
     requestBody: requestBodyOptions = {},
-    response: responseOptions = {},
     responses: responsesOptions = {},
     cookie: cookieOptions = {},
     header: headerOptions = {},
@@ -122,16 +111,8 @@ export function transformOperation(
     query: queryOptions = {},
   } = options;
 
-  const requestBody = body
-    ? transformRequestBody(body, requestBodyOptions)
-    : undefined;
-  const { httpCode = 200 } = responseOptions;
-  const responses = {
-    ...responsesOptions,
-    [httpCode]: response
-      ? transformResponse(response, responseOptions)
-      : undefined,
-  };
+  const requestBody = transformRequestBody(body, requestBodyOptions);
+  const responses = transformResponses(response, responsesOptions);
   const parameters = [
     ...(path ? transformParameters("path", path, pathOptions) : []),
     ...(query ? transformParameters("query", query, queryOptions) : []),
@@ -140,11 +121,10 @@ export function transformOperation(
   ];
 
   const operation = {
-    ...operationOptions,
     parameters,
     requestBody,
     responses,
   } satisfies OperationObject;
 
-  return operation as OperationObject;
+  return deepMerge(operationOptions, operation) as OperationObject;
 }
