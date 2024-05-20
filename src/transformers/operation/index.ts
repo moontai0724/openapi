@@ -114,10 +114,10 @@ export function transformOperation(
   const requestBody = transformRequestBody(body, requestBodyOptions);
   const responses = transformResponses(response, responsesOptions);
   const parameters = [
+    ...(cookie ? transformParameters("cookie", cookie, cookieOptions) : []),
+    ...(header ? transformParameters("header", header, headerOptions) : []),
     ...(path ? transformParameters("path", path, pathOptions) : []),
     ...(query ? transformParameters("query", query, queryOptions) : []),
-    ...(header ? transformParameters("header", header, headerOptions) : []),
-    ...(cookie ? transformParameters("cookie", cookie, cookieOptions) : []),
   ];
 
   const operation = {
