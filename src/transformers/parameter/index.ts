@@ -43,8 +43,7 @@ export function transformParameter(
   required: boolean,
   options: TransformParameterOptions = {},
 ) {
-  const { example, examples, ...remains } = schema;
-  const { description } = remains;
+  const { description, example, examples, ...remains } = schema;
   const {
     example: overwriteExample,
     examples: overwriteExamples,
