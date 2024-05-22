@@ -35,10 +35,7 @@ export function transformRequestBody(
   schema?: SchemaObject,
   options: TransformRequestBodyOptions = {},
 ) {
-  if (!schema)
-    return {
-      content: {},
-    };
+  if (!schema) return undefined;
 
   const { description, ...remains } = schema;
   const {
