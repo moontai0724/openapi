@@ -4,7 +4,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.0.0-pre",
+  "version": "1.0.0",
   "description": "An OpenAPI document define, generate and schema validation library supported by ajv.",
   "author": "moontai0724",
   "license": "MIT",
