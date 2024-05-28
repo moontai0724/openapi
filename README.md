@@ -49,6 +49,7 @@ const openapi = new OpenAPI({
 
 openapi.define("/:id", "get", {
   cookie: {
+    type: "object",
     properties: {
       token: {
         type: "string",
@@ -57,6 +58,8 @@ openapi.define("/:id", "get", {
     },
   },
   path: {
+    type: "object",
+    required: ["id"],
     properties: {
       id: {
         type: "number",
@@ -65,6 +68,8 @@ openapi.define("/:id", "get", {
   },
   response: {
     description: "Specific resource",
+    type: "object",
+    required: ["success", "message"],
     properties: {
       success: {
         type: "boolean",
@@ -74,6 +79,45 @@ openapi.define("/:id", "get", {
       },
     },
   },
+});
+
+console.log(openapi.json()); // Generated OpenAPI JSON string.
+console.log(openapi.yaml()); // Generated OpenAPI YAML string.
+```
+
+Rather than directly defining the JSON schemas in hand, we recommend you to use the [TypeBox](https://github.com/sinclairzx81/typebox) library to define the schemas. It would be like this:
+
+```typescript
+import { Type } from "@sinclair/typebox";
+
+import OpenAPI from "./src";
+
+const openapi = new OpenAPI({
+  openapi: "3.1.0",
+  info: {
+    title: "Example",
+    version: "1.0.0",
+  },
+});
+
+openapi.define("/:id", "get", {
+  cookie: Type.Object({
+    token: Type.Optional(
+      Type.String({
+        description: "Token",
+      }),
+    ),
+  }),
+  path: Type.Object({
+    id: Type.Number(),
+  }),
+  response: Type.Object(
+    {
+      success: Type.Boolean(),
+      message: Type.String(),
+    },
+    { description: "Specific resource" },
+  ),
 });
 
 console.log(openapi.json()); // Generated OpenAPI JSON string.
@@ -99,7 +143,7 @@ paths:
             type: "string"
         - name: "id"
           in: "path"
-          required: false
+          required: true
           schema:
             type: "number"
       responses:
@@ -108,11 +152,15 @@ paths:
           content:
             application/json:
               schema:
+                type: "object"
                 properties:
                   success:
                     type: "boolean"
                   message:
                     type: "string"
+                required:
+                  - "success"
+                  - "message"
 ```
 
 ### Define a path and generate the document with options to adjust or overwrites
@@ -130,6 +178,7 @@ openapi.define(
   "post",
   {
     body: {
+      type: "object",
       properties: {
         name: {
           type: "string",
@@ -170,11 +219,13 @@ paths:
         content:
           application/json:
             schema:
+              type: "object"
               properties:
                 name:
                   type: "string"
           application/x-www-form-urlencoded:
             schema:
+              type: "object"
               properties:
                 name:
                   type: "string"
