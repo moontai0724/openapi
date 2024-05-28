@@ -21,19 +21,23 @@ export interface OperationSchemas {
    */
   body?: SchemaObject;
   /**
-   * Schema for the cookie parameters.
+   * Schema for the cookie parameters in JSON object.
+   * Key as the name of the parameter and value is the schema.
    */
   cookie?: ParameterSchema;
   /**
-   * Schema for the header parameters.
+   * Schema for the header parameters in JSON object.
+   * Key as the name of the parameter and value is the schema.
    */
   header?: ParameterSchema;
   /**
-   * Schema for the path parameters.
+   * Schema for the path parameters in JSON object.
+   * Key as the name of the parameter and value is the schema.
    */
   path?: ParameterSchema;
   /**
-   * Schema for the query parameters.
+   * Schema for the query parameters in JSON object.
+   * Key as the name of the parameter and value is the schema.
    */
   query?: ParameterSchema;
   /**

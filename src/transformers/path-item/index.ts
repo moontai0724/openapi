@@ -29,8 +29,9 @@ export interface TransformPathItemOptions extends TransformOperationOptions {
 
 /**
  * Transform a schema object to a response object.
- * @param schemas The schema of the response.
- * @param options Options or overwrites to the result response when transforming.
+ * @param method HTTP method that this operation is for, will overwrite existing path item if it exists.
+ * @param schemas Schemas for this operation.
+ * @param options Options for transforming the path item.
  * @returns Transformed response object.
  */
 export function transformPathItem(

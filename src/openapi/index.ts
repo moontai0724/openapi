@@ -13,21 +13,23 @@ import { getOrInit } from "../utils/get-or-init";
 export interface BasicOpenAPIObject extends Omit<OpenAPIObject, "paths"> {}
 
 export class OpenAPI {
+  /**
+   * Internal save of original schemas, could be reused for valiation or other usages.
+   */
   protected operationSchemas: Map<string, OperationSchemas> = new Map();
 
   /**
    * Create a new instance to define and generate OpenAPI document.
-   * @param document OpenAPI document initial value, will be merged with the result of `define` method
-   * @param options Options for features about this instance
+   * @param document OpenAPI document initial value, will be merged with the result of `define` method.
    */
   constructor(protected document: BasicOpenAPIObject) {}
 
   /**
-   * Define an operation for a path, save original schemas and also transform the schemas into OpenAPI format.
+   * Define an operation for a path, save original schemas and transform the schemas into OpenAPI format.
    * @param path API endpoint path, used as key in paths object.
    * @param method HTTP method that this operation is for, will overwrite existing path item if it exists.
    * @param operationSchemas Schemas for this operation.
-   * @param pathItemOptions Additional options to overwrite properties.
+   * @param pathItemOptions Options for transforming the path item.
    * @returns Generated path item object.
    */
   public define(
