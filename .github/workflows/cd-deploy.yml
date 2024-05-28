@@ -1,9 +1,9 @@
-name: "CD: Deploy when pushes to release"
+name: "CD: Deploy when pushes to main"
 
 on:
   push:
     branches:
-      - release
+      - main
 
 jobs:
   test-and-upload-coverage:
