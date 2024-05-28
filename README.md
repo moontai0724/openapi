@@ -6,6 +6,12 @@
 
 An OpenAPI document define, generate and schema validation library supported by ajv.
 
+The schema validation feature is currently under development, version 1.0.0 does not have schema validation feature, only document generation.
+
+## To-do
+
+- [ ] Add schema validation.
+
 ## Install
 
 ### NPM
