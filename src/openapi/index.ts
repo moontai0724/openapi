@@ -1,4 +1,9 @@
-import type { OpenAPIObject, PathItemObject } from "@moontai0724/openapi-types";
+import type {
+  OpenAPIObject,
+  PathItemObject,
+  SchemaObject,
+} from "@moontai0724/openapi-types";
+import Ajv, { type ErrorObject, type Options as AjvOptions } from "ajv";
 import YAML from "json-to-pretty-yaml";
 
 import {
@@ -11,6 +16,10 @@ import { deepMerge } from "../utils/deep-merge";
 import { getOrInit } from "../utils/get-or-init";
 
 export interface BasicOpenAPIObject extends Omit<OpenAPIObject, "paths"> {}
+
+export interface InitOptions extends TransformPathItemOptions {
+  ajv?: AjvOptions;
+}
 
 export class OpenAPI {
   /**
@@ -58,6 +67,76 @@ export class OpenAPI {
     paths[path] = pathItem;
 
     return pathItem;
+  }
+
+  protected getAvjInstance(
+    path: string,
+    method: HttpMethod,
+    options: AjvOptions = {},
+  ) {
+    const schemas = this.operationSchemas.get(
+      `${method.toUpperCase()} ${path}`,
+    );
+
+    if (!schemas) {
+      throw new Error(`No schema found for ${method.toUpperCase()} ${path}`);
+    }
+
+    return new Ajv({
+      ...options,
+      schemas: schemas as Record<string, SchemaObject>,
+    });
+  }
+
+  public init(
+    path: `/${string}`,
+    method: HttpMethod,
+    operationSchemas: OperationSchemas,
+    options: InitOptions = {},
+  ): Ajv {
+    const { ajv, ...remainOptions } = options;
+
+    this.define(path, method, operationSchemas, remainOptions);
+
+    const ajvInstance = this.getAvjInstance(path, method, ajv);
+
+    return ajvInstance;
+  }
+
+  /**
+   * Validate the data against the defined schemas. Only validate the schema if
+   * the key present in the data.
+   *
+   * @param path API endpoint path, used as key in paths object.
+   * @param method HTTP method that this operation is for, will overwrite
+   * existing path item if it exists.
+   * @param data Data object to be validated. The key is the schema name. If the
+   * key is not present in the data, the schema will not be validated.
+   * @param options Options for Ajv instance.
+   * @returns Validation result of each schema.
+   */
+  public validate(
+    path: `/${string}`,
+    method: HttpMethod,
+    data: Partial<Record<keyof OperationSchemas, unknown>>,
+    options: AjvOptions,
+  ) {
+    const ajvInstance = this.getAvjInstance(path, method, options);
+    const validationResult: Record<
+      keyof OperationSchemas,
+      ErrorObject[] | null | undefined
+    > = Object.entries(data).reduce(
+      (acc, [key, value]) => {
+        ajvInstance.validate(key, value);
+
+        Object.assign(acc, { [key]: ajvInstance.errors });
+
+        return acc;
+      },
+      {} as Record<keyof OperationSchemas, ErrorObject[] | null>,
+    );
+
+    return validationResult;
   }
 
   /**
