@@ -1,4 +1,9 @@
-import type { OpenAPIObject, PathItemObject } from "@moontai0724/openapi-types";
+import type {
+  OpenAPIObject,
+  PathItemObject,
+  SchemaObject,
+} from "@moontai0724/openapi-types";
+import Ajv, { type Options as AjvOptions } from "ajv";
 import YAML from "json-to-pretty-yaml";
 
 import {
@@ -11,6 +16,10 @@ import { deepMerge } from "../utils/deep-merge";
 import { getOrInit } from "../utils/get-or-init";
 
 export interface BasicOpenAPIObject extends Omit<OpenAPIObject, "paths"> {}
+
+export interface InitOptions extends TransformPathItemOptions {
+  ajv?: AjvOptions;
+}
 
 export class OpenAPI {
   /**
@@ -58,6 +67,40 @@ export class OpenAPI {
     paths[path] = pathItem;
 
     return pathItem;
+  }
+
+  protected getAvjInstance(
+    path: string,
+    method: HttpMethod,
+    options: AjvOptions = {},
+  ) {
+    const schemas = this.operationSchemas.get(
+      `${method.toUpperCase()} ${path}`,
+    );
+
+    if (!schemas) {
+      throw new Error(`No schema found for ${method.toUpperCase()} ${path}`);
+    }
+
+    return new Ajv({
+      ...options,
+      schemas: schemas as Record<string, SchemaObject>,
+    });
+  }
+
+  public init(
+    path: `/${string}`,
+    method: HttpMethod,
+    operationSchemas: OperationSchemas,
+    options: InitOptions = {},
+  ): Ajv {
+    const { ajv, ...remainOptions } = options;
+
+    this.define(path, method, operationSchemas, remainOptions);
+
+    const ajvInstance = this.getAvjInstance(path, method, ajv);
+
+    return ajvInstance;
   }
 
   /**

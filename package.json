@@ -65,6 +65,7 @@
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
     "@vitest/coverage-v8": "^1.4.0",
+    "ajv": "^8.14.0",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^18.0.0",
@@ -95,6 +96,7 @@
     "json-to-pretty-yaml": "^1.2.2"
   },
   "peerDependencies": {
-    "@moontai0724/openapi-types": "^3.1.5"
+    "@moontai0724/openapi-types": "^3.1.5",
+    "ajv": "^8.14.0"
   }
 }
