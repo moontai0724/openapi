@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/moontai0724/openapi/compare/v1.0.0...v1.1.0) (2024-06-09)
+
+
+### Features
+
+* **init:** init ajv instance and define the path ([506ee2b](https://github.com/moontai0724/openapi/commit/506ee2ba09abf96b95d1e361fe190ec556787222))
+* **validate:** validate the data with existing schema ([482e35c](https://github.com/moontai0724/openapi/commit/482e35c59d574ba92fc02983d8375b179ccf2776))
+
 # 1.0.0 (2024-05-28)
 
 
