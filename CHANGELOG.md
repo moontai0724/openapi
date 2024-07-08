@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/moontai0724/openapi/compare/v1.1.0...v1.1.1) (2024-07-08)
+
+
+### Bug Fixes
+
+* add require entrypoint in exports ([240496d](https://github.com/moontai0724/openapi/commit/240496d4e0283d80ef40291fd2e8cbc7b2384cd3))
+
 # [1.1.0](https://github.com/moontai0724/openapi/compare/v1.0.0...v1.1.0) (2024-06-09)
 
 
